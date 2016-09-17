@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using BookStore.Entity;
+using PagedList;
+using System.Web;
+using System.IO;
 
 namespace BookStore.Controllers
 {
@@ -16,9 +17,31 @@ namespace BookStore.Controllers
         private DatabaseEntities db = new DatabaseEntities();
 
         // GET: Books
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string searchString, string sortOption, int page = 1)
         {
-            return View(await db.Books.ToListAsync());
+            int pageSize = 3;
+            var books = db.Books.AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+
+                books = db.Books.Where(p => p.title.ToLower().Contains(searchString));
+            }
+            switch (sortOption)
+            {
+                case "title_acs":
+                    books = books.OrderBy(p => p.title);
+                    break;
+                default:
+                    books = books.OrderBy(p => p.id);
+                    break;
+
+            }
+
+            return Request.IsAjaxRequest()
+                ? (ActionResult)PartialView("BookList", books.ToPagedList(page, pageSize))
+                : View(books.ToPagedList(page, pageSize));
+                //return View(await db.Books.ToListAsync());
         }
 
         // GET: Books/Details/5
@@ -47,10 +70,35 @@ namespace BookStore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "id,title,price,page_count,book_description,picture")] Books books)
+        public async Task<ActionResult> Create([Bind(Include = "id,title,price,page_count,book_description,picture")] Books books, HttpPostedFileBase upload)
         {
-            if (ModelState.IsValid)
+         
+             if (ModelState.IsValid)
             {
+                if (upload != null)
+                {
+                    var supportedTypes = new[] { "jpg", "jpeg", "png" };
+                    var fileExt = System.IO.Path.GetExtension(upload.FileName).Substring(1);
+
+                    if (!supportedTypes.Contains(fileExt))
+                    {
+                        return RedirectToAction("Index");
+                        // ModelState.AddModelError("photo", "Invalid type. Only the following types (jpg, jpeg, png) are supported.");
+
+                    }
+
+                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(upload.FileName);
+                    string path = Path.Combine(Server.MapPath("~/App_Data/Images"), filename);
+                    upload.SaveAs(path);
+
+                    books.picture = filename;
+                }
+                else
+                {
+                    books.picture = "default.jpg";
+                }
+
+
                 db.Books.Add(books);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");

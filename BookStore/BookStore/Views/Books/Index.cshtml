@@ -1,57 +1,32 @@
-﻿@model IEnumerable<BookStore.Entity.Books>
+﻿@using PagedList;
+@using PagedList.Mvc;
 
+@model PagedList.IPagedList<BookStore.Entity.Books>
 @{
     ViewBag.Title = "Index";
 }
+<div id="BooksList">
+    <h2>Index</h2>
 
-<h2>Index</h2>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <div class="container">
+        <div class="row">
+            
+            <div id="custom-search-input">
+                <div class="input-group col-md-12">
+                    <input type="text" id="SearchString" class=" search-query form-control" placeholder="Search" />
+                    <span class="input-group-btn">
+                        <button id="serchBtn" class="btn " type="button">
+                            <span class=" glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="bookList">
+        @Html.Partial("BookList", Model)
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.page_count)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.book_description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.picture)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.price)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.page_count)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.book_description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.picture)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.id })
-        </td>
-    </tr>
-}
-
-</table>
+    </div>

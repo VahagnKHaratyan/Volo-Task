@@ -306,6 +306,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Upload\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

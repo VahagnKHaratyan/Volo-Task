@@ -66,6 +66,11 @@ namespace BookStore.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Books books = await db.Books.FindAsync(id);
+           // var autors = await db.Authors.FindAsync(1);
+           // books.Authors.Add(autors);
+
+
+           // books.Authors = autors;
             if (books == null)
             {
                 return HttpNotFound();
@@ -155,28 +160,13 @@ namespace BookStore.Controllers
         // GET: Books/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Books books = await db.Books.FindAsync(id);
-            if (books == null)
-            {
-                return HttpNotFound();
-            }
-            return View(books);
-        }
-
-        // POST: Books/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
-        {
             Books books = await db.Books.FindAsync(id);
             db.Books.Remove(books);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+      
 
         protected override void Dispose(bool disposing)
         {

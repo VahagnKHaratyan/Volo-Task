@@ -14,11 +14,17 @@ namespace BookStore.Controllers
 {
     public class BooksController : Controller
     {
+        public dynamic ViewBagProperty
+        {
+            get;
+            set;
+        }
         private DatabaseEntities db = new DatabaseEntities();
 
         // GET: Books
-        public async Task<ActionResult> Index(string searchString, string sortOption, int page = 1)
+        public async Task<ActionResult> Index(string searchString, string sortOption, int page = 1, string pageType = "image")
         {
+            
             int pageSize = 3;
             var books = db.Books.AsQueryable();
 
@@ -37,9 +43,17 @@ namespace BookStore.Controllers
                     break;
 
             }
+            if (pageType == "image")
+            {
+                ViewBag.pageType = "image";
+            }
+            else {
+                ViewBag.pageType = "table";
+            }
+
 
             return Request.IsAjaxRequest()
-                ? (ActionResult)PartialView("BookList", books.ToPagedList(page, pageSize))
+                ? pageType =="image" ? (ActionResult)PartialView("_ImageList", books.ToPagedList(page, pageSize)) : (ActionResult)PartialView("_BookList", books.ToPagedList(page, pageSize))
                 : View(books.ToPagedList(page, pageSize));
                 //return View(await db.Books.ToListAsync());
         }
@@ -88,7 +102,7 @@ namespace BookStore.Controllers
                     }
 
                     string filename = Guid.NewGuid().ToString() + Path.GetExtension(upload.FileName);
-                    string path = Path.Combine(Server.MapPath("~/App_Data/Images"), filename);
+                    string path = Path.Combine(Server.MapPath("~/Upload"), filename);//("~/App_Data/Images"), filename);
                     upload.SaveAs(path);
 
                     books.picture = filename;

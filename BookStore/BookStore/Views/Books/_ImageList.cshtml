@@ -1,0 +1,35 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model PagedList.IPagedList<BookStore.Entity.Books>
+
+<div id="list">
+
+    @foreach (var item in Model)
+    {
+
+
+        <div class="list_item">
+            <a href="/product/show/9990">
+                <span class="list_item_image"><img alt="" src="~/Upload/@item.picture"></span>
+                <span class="list_item_info">
+                   
+                    <span class="text_common container">
+                        <span class="book-title"  data-toggle="tooltip" title="@item.title">@Html.DisplayFor(modelItem => item.title)</span>
+                        <span class="book-price">@Html.DisplayFor(modelItem => item.price) €</span>
+                    </span>
+                </span>
+            </a>
+        </div>
+    }
+    <div class="book-pagination">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+    </div>
+
+
+
+
+
+
+      
+

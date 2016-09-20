@@ -63,3 +63,51 @@ textarea {
         z-index: 3;   
     }
 
+
+
+ .list_item {
+    width: 181px;
+    border: 1px solid #ccc;
+    float: left;
+    margin: 5px;
+    }
+
+    a img {
+    border: none;
+    text-align: center;
+    width: 178px;
+    }
+    .list_item span.list_item_info {
+    display: block;
+    margin: 0 5px;
+    }
+    .list_item_image {
+    display: block;
+    width: 171px;
+    margin: 5px;
+    overflow: hidden;
+    text-align: center;
+    height: auto !important;
+    min-height: 183px;
+}
+.book-price{
+    float: right;
+    color: #f60;
+    display: block;
+}
+.text_common {
+    font-family: Arial;
+    font-style: normal;
+    font-size: 12px;
+}
+.book-title{
+    white-space: nowrap;
+    width: 65%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+.book-pagination {
+    clear:both;
+}
+

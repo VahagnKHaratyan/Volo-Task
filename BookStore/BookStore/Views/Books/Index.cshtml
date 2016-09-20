@@ -16,7 +16,7 @@
             
             <div id="custom-search-input">
                 <div class="input-group col-md-12">
-                    <input type="text" id="SearchString" class=" search-query form-control" placeholder="Search" />
+                    <input type="text" id="SearchString" class="search-query form-control" placeholder="Search" />
                     <span class="input-group-btn">
                         <button id="serchBtn" class="btn " type="button">
                             <span class=" glyphicon glyphicon-search"></span>
@@ -27,6 +27,33 @@
         </div>
     </div>
     <div id="bookList">
-        @Html.Partial("BookList", Model)
+        @if (@ViewBag.pageType == "image")
+        {
+          //  @Html.Partial("BookList", Model);
+          @Html.Partial("_ImageList", Model);
+        }else{
+          @Html.Partial("_BookList", Model);
+        }
 
     </div>
+@section scripts
+{
+            <script type="text/javascript">
+
+        function search() {
+                    $.ajax({
+                        url: "/Books/Index?searchString=" + $('#SearchString').val(),
+                        success: function(result) {
+                           // ChangeUrl("index", "/Books/Index?searchString=" + $('#SearchString').val());
+                            $('#bookList').html(result);
+                        }
+                    });
+                }
+        $("#serchBtn").on( "click",function () {
+            alert("hasa");
+                        search();
+        });
+
+    </script>
+        }
+ 

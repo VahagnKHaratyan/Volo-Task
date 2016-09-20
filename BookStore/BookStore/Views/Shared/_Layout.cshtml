@@ -37,22 +37,6 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
-    <script type="text/javascript">
    
-function search() {
-            $.ajax({
-                url: "/Books/Index?searchString=" + $('#SearchString').val(),
-                success: function(result) {
-                   // ChangeUrl("index", "/Books/Index?searchString=" + $('#SearchString').val());
-                    $('#bookList').html(result);
-                }
-            });
-        }
-$("#serchBtn").on( "click",function () {
-    alert("hasa");
-                search();
-});
-
-    </script>
 </body>
 </html>

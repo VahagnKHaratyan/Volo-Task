@@ -20,6 +20,7 @@ namespace BookStore.Controllers
             set;
         }
         private DatabaseEntities db = new DatabaseEntities();
+        private object viewModel;
 
         // GET: Books
         public async Task<ActionResult> Index(string searchString, string sortOption, int page = 1, string pageType = "image")
@@ -43,13 +44,14 @@ namespace BookStore.Controllers
                     break;
 
             }
-            if (pageType == "image")
+            if ( pageType == "table")
             {
-                ViewBag.pageType = "image";
-            }
-            else {
                 ViewBag.pageType = "table";
             }
+            else {
+                ViewBag.pageType = "image";
+            }
+           
 
 
             return Request.IsAjaxRequest()
@@ -79,6 +81,7 @@ namespace BookStore.Controllers
         }
 
         // GET: Books/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
@@ -88,8 +91,9 @@ namespace BookStore.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "id,title,price,page_count,book_description,picture")] Books books, HttpPostedFileBase upload)
+        public async Task<ActionResult> Create([Bind(Include = "id,title,price,page_count,book_description,picture,Autors")] Books books, HttpPostedFileBase upload)
         {
          
              if (ModelState.IsValid)
@@ -119,7 +123,9 @@ namespace BookStore.Controllers
 
 
                 db.Books.Add(books);
-                await db.SaveChangesAsync();
+              
+                
+              await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -127,6 +133,7 @@ namespace BookStore.Controllers
         }
 
         // GET: Books/Edit/5
+        [Authorize]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -145,12 +152,41 @@ namespace BookStore.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "id,title,price,page_count,book_description,picture")] Books books)
+        public async Task<ActionResult> Edit([Bind(Include = "id,title,price,page_count,book_description,picture,Authors")] Books books, HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
+                if (upload != null)
+                {
+                    var supportedTypes = new[] { "jpg", "jpeg", "png" };
+                    var fileExt = System.IO.Path.GetExtension(upload.FileName).Substring(1);
+
+                    if (!supportedTypes.Contains(fileExt))
+                    {
+                        return RedirectToAction("Index");
+                        // ModelState.AddModelError("photo", "Invalid type. Only the following types (jpg, jpeg, png) are supported.");
+
+                    }
+
+                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(upload.FileName);
+                    string path = Path.Combine(Server.MapPath("~/Upload"), filename);//("~/App_Data/Images"), filename);
+                    upload.SaveAs(path);
+                    string oldFilePath = Path.Combine(Server.MapPath("~/Upload"), books.picture);
+                    
+                    if ((System.IO.File.Exists(oldFilePath)))
+                    {
+
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                    books.picture = filename;
+                 
+                }
+
+                var pp = books.Authors;
                 db.Entry(books).State = EntityState.Modified;
+                db.Entry(books.Authors).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -158,6 +194,7 @@ namespace BookStore.Controllers
         }
 
         // GET: Books/Delete/5
+        [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
             Books books = await db.Books.FindAsync(id);

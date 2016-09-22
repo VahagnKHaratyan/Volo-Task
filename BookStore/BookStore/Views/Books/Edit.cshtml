@@ -3,14 +3,14 @@
 @{
     ViewBag.Title = "Edit";
 }
-
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <h2>Edit</h2>
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Edit", "Books", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Books</h4>
         <hr />
@@ -26,6 +26,7 @@
         </div>
 
         <div class="form-group">
+            
             @Html.LabelFor(model => model.price, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.price, new { htmlAttributes = new { @class = "form-control" } })
@@ -45,6 +46,7 @@
             @Html.LabelFor(model => model.book_description, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.book_description, new { htmlAttributes = new { @class = "form-control" } })
+               
                 @Html.ValidationMessageFor(model => model.book_description, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -52,23 +54,74 @@
         <div class="form-group">
             @Html.LabelFor(model => model.picture, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.picture, new { htmlAttributes = new { @class = "form-control" } })
+                <input type="file" name="upload" id="upload" />
                 @Html.ValidationMessageFor(model => model.picture, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.picture, new { htmlAttributes = new { @class = "form-control hidden" } })
+                <img alt="" src="~/Upload/@Model.picture" class="small-img" />
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+    
+@{
+    var autors = Model.Authors.ToList();
+   
+}
+        @for (var i = 0; i < autors.Count(); i++)
+        {
+            @Html.LabelFor(model => Model.Authors.ToList()[i].first_name, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.EditorFor(model => Model.Authors.ToList()[i].first_name, new { htmlAttributes = new { @class = "form-control" } })
+
+        }
+        <div class="author-block">
+            @foreach (var item in Model.Authors)
+            {
+                <div class="form-group">
+                    @Html.LabelFor(model => item.first_name, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => item.first_name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => item.first_name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => item.last_name, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => item.last_name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => item.last_name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => item.birth_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => item.birth_date, new { htmlAttributes = new { @class = "form-control", @id = "datepicker" } })
+                        @Html.ValidationMessageFor(model => item.birth_date, "", new { @class = "text-danger" })
+
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
             </div>
         </div>
-    </div>
-}
+        </div>
+        }
 
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
 
 @section Scripts {
+
     @Scripts.Render("~/bundles/jqueryval")
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+          $( function() {
+              $("#datepicker").datepicker();//{ dateFormat: 'dd/mm/yy' }
+          } );
+
+    </script>
 }
+

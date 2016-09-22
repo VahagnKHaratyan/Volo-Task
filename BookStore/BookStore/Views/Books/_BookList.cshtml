@@ -3,8 +3,12 @@
 
 @model PagedList.IPagedList<BookStore.Entity.Books>
 
+
     <table class="table">
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => Model[0].picture)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => Model[0].title)
             </th>
@@ -17,15 +21,17 @@
             <th>
                 @Html.DisplayNameFor(model => Model[0].book_description)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => Model[0].picture)
-            </th>
+          
             <th></th>
         </tr>
 
         @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    <img alt="" src="~/Upload/@item.picture" class="small-img" >
+                   
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.title)
                 </td>
@@ -38,14 +44,17 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.book_description)
                 </td>
+               
                 <td>
-                    @Html.DisplayFor(modelItem => item.picture)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.id }) |
-
-                    @Html.ActionLink("Delete", "Delete", new { id = item.id }, new { onclick = "return confirm('Are you sure?');" })
+                    
+                    @Html.ActionLink("Details", "Details", new { id = item.id })
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <span>|</span>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.id }) 
+                        <span>|</span>
+                        @Html.ActionLink("Delete", "Delete", new { id = item.id }, new { onclick = "return confirm('Are you sure?');" })
+                    }
                 </td>
             </tr>
         }

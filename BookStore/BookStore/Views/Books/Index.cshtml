@@ -10,6 +10,14 @@
 
     <p>
         @Html.ActionLink("Create New", "Create")
+        @if (@ViewBag.pageType == "image")
+        {
+            @Html.ActionLink("Table Demo", "Index", new { pageType = "table" })
+        }
+        else 
+        {
+            @Html.ActionLink("Image Demo", "Index", new { pageType = "image" })
+        }
     </p>
     <div class="container">
         <div class="row">
@@ -29,10 +37,11 @@
     <div id="bookList">
         @if (@ViewBag.pageType == "image")
         {
-            @Html.Partial("_BookList", Model);
+           // @Html.Partial("_BookList", Model);
           @Html.Partial("_ImageList", Model);
         }else{
           @Html.Partial("_BookList", Model);
+
         }
 
     </div>
